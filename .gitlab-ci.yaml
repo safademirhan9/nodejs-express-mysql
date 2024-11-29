@@ -1,0 +1,42 @@
+stages:
+  - build
+  - test
+  - package
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t my-app:${CI_COMMIT_SHA} .
+    - docker tag my-app:${CI_COMMIT_SHA} my-registry/my-app:${CI_COMMIT_SHA}
+  only:
+    - main
+    - develop
+
+test:
+  stage: test
+  image: node:16
+  script:
+    - npm install
+    - npm test
+  only:
+    - main
+    - develop
+
+package:
+  stage: package
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - echo "Logging into the container registry"
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - echo "Tagging the Docker image"
+    - docker tag my-app:${CI_COMMIT_SHA} $CI_REGISTRY/my-group/my-app:${CI_COMMIT_SHA}
+    - echo "Pushing the Docker image to the registry"
+    - docker push $CI_REGISTRY/my-group/my-app:${CI_COMMIT_SHA}
+  only:
+    - main
+    - develop
