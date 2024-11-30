@@ -1,0 +1,12 @@
+replicaCount: 2
+image:
+  repository: my-app
+  tag: latest
+resources:
+  limits:
+    cpu: "500m"
+    memory: "256Mi"
+  requests:
+    cpu: "250m"
+    memory: "128Mi"
+environment: "staging"

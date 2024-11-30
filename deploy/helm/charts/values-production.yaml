@@ -1,0 +1,12 @@
+replicaCount: 4
+image:
+  repository: my-app
+  tag: stable
+resources:
+  limits:
+    cpu: "1"
+    memory: "512Mi"
+  requests:
+    cpu: "500m"
+    memory: "256Mi"
+environment: "production"
